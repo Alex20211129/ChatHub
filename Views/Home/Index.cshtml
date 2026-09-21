@@ -4,37 +4,36 @@
 
 <div class="hero-section text-center">
     <h1 class="display-5 fw-bold">ChatRoomSys</h1>
-    <p class="lead mb-4">練習作品集：同時用原生 WebSocket 與 SignalR 打造同一個聊天室功能，並沿用 MemberShipSys.Core 的會員系統。</p>
-    <a asp-controller="Chat" asp-action="Index" class="btn btn-light btn-lg">
-        <i class="bi bi-chat-dots-fill"></i> 進入聊天室
-    </a>
+    <p class="lead mb-0">練習作品集：同時用原生 WebSocket 與 SignalR 打造同一個聊天室功能，並沿用 MemberShipSys.Core 的會員系統。訪客可以直接用暱稱加入，登入會員則會額外載入歷史訊息。</p>
 </div>
 
 <div class="row g-4">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
                 <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
                 <h5 class="card-title">原生 WebSocket</h5>
-                <p class="card-text text-muted">手刻連線管理、廣播、在線名單，理解即時通訊的底層機制。</p>
+                <p class="card-text">直接使用 System.Net.WebSockets，自己管理連線、廣播與訊息格式。</p>
+                <a asp-controller="Chat" asp-action="WebSocket" class="btn btn-primary">進入</a>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
                 <div class="feature-icon"><i class="bi bi-broadcast"></i></div>
                 <h5 class="card-title">SignalR</h5>
-                <p class="card-text text-muted">高階封裝、自動重連、事件分派，開發效率更高的即時通訊方案。</p>
+                <p class="card-text">使用 ASP.NET Core SignalR Hub，內建自動重連、傳輸協商等機制。</p>
+                <a asp-controller="Chat" asp-action="SignalR" class="btn btn-primary">進入</a>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100">
+    <div class="col-12">
+        <div class="card">
             <div class="card-body">
                 <div class="feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
                 <h5 class="card-title">會員系統</h5>
-                <p class="card-text text-muted">沿用 MemberShipSys.Core，訪客可用暱稱聊天，會員登入後享有歷史訊息。</p>
+                <p class="card-text text-muted mb-0">沿用 MemberShipSys.Core，訪客可用暱稱聊天，會員登入後享有歷史訊息。</p>
             </div>
         </div>
     </div>

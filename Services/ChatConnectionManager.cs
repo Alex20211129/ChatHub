@@ -67,6 +67,14 @@ namespace ChatRoomSys.Services
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // 連線被取消（伺服器關閉、使用者離開頁面等），視為正常斷線，不用往外拋例外
+            }
+            catch (WebSocketException)
+            {
+                // WebSocket 層級的連線異常（例如對方網路突然斷開），同樣視為正常斷線
+            }
             finally
             {
                 var participant = _chatState.Remove(connectionId);
