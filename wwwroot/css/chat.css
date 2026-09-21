@@ -1,0 +1,115 @@
+.chat-page .status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.chat-page .status-connecting {
+    background-color: #fff3bf;
+    color: #997404;
+}
+
+.chat-page .status-connected {
+    background-color: #d3f9d8;
+    color: #2b8a3e;
+}
+
+.chat-page .status-disconnected {
+    background-color: #ffe3e3;
+    color: #c92a2a;
+}
+
+.chat-page .messages-panel {
+    height: 360px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.chat-message {
+    display: block;
+    width: fit-content;
+    max-width: 85%;
+    padding: 0.4rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.9rem;
+    background-color: #e7f0ff;
+    word-break: break-word;
+}
+
+.chat-message .chat-author {
+    font-weight: 700;
+    margin-right: 0.4rem;
+    color: #1c7ed6;
+}
+
+.chat-message .chat-time {
+    margin-left: 0.5rem;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.chat-message.system-message {
+    display: block;
+    max-width: 100%;
+    background: none;
+    color: #868e96;
+    font-style: italic;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.2rem 0;
+}
+
+.chat-page .online-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.chat-page .online-list li {
+    display: flex;
+    align-items: center;
+    padding: 0.35rem 0.6rem;
+    margin-bottom: 0.35rem;
+    border-radius: 0.5rem;
+    background-color: #f1f3f5;
+    font-size: 0.9rem;
+}
+
+.chat-page .online-list li::before {
+    content: "";
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #40c057;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* RWD：小於 Bootstrap md 斷點（768px）時的手機版調整 */
+@media (max-width: 767.98px) {
+    .chat-page h1 {
+        font-size: 1.5rem;
+    }
+
+    .chat-page .messages-panel {
+        height: 260px;
+    }
+
+    .chat-page .online-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .chat-page .online-list li {
+        margin-bottom: 0;
+        flex: 0 0 auto;
+    }
+
+    .chat-message {
+        max-width: 95%;
+    }
+}

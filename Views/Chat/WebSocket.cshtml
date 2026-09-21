@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "WebSocket 聊天室";
+}
+
+<div class="chat-page">
+    <h1>WebSocket 聊天室</h1>
+    <p>狀態：<span id="status" class="status-badge status-connecting">連線中...</span></p>
+
+    <div id="joinPanel" class="card mb-3" style="display:none;">
+        <div class="card-body">
+            <label class="form-label text-muted">輸入暱稱加入聊天室</label>
+            <div class="input-group">
+                <input type="text" id="displayNameInput" class="form-control" placeholder="輸入暱稱" data-default-name="@User.Identity?.Name" />
+                <button id="joinButton" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> 加入聊天室</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatPanel" class="card" style="display:none;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <div id="messages" class="messages-panel rounded p-3 mb-3"></div>
+                    <div class="input-group">
+                        <input type="text" id="messageInput" class="form-control" placeholder="輸入訊息..." />
+                        <button id="sendButton" class="btn btn-primary"><i class="bi bi-send-fill"></i> 送出</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted"><i class="bi bi-people-fill"></i> 在線名單</h6>
+                    <ul id="onlineList" class="online-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/chat-websocket.js" asp-append-version="true"></script>
+}
