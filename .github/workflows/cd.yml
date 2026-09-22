@@ -1,0 +1,46 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: [self-hosted, Windows]
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish (self-contained, win-x64)
+        run: dotnet publish ChatRoomSys.csproj -c Release -r win-x64 --self-contained true -o publish_output
+
+      - name: Deploy to IIS
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          try {
+            Stop-WebAppPool -Name "ChatRoomSysPool"
+            Stop-Website -Name "ChatRoomSys"
+
+            robocopy publish_output "C:\inetpub\wwwroot\chatroomsys" /MIR /XF appsettings.Production.json /XD Logs
+            if ($LASTEXITCODE -ge 8) {
+              throw "robocopy failed with exit code $LASTEXITCODE"
+            }
+          }
+          finally {
+            Start-WebAppPool -Name "ChatRoomSysPool"
+            Start-Website -Name "ChatRoomSys"
+          }

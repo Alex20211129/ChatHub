@@ -90,8 +90,12 @@ deploy-scripts/      EF Core migration SQL、測試帳號 seed script（部署�
    ```
 5. `dotnet run --launch-profile http`，首頁會自動 seed 管理員帳號（預設 `admin@example.com` / `Admin123!`，正式環境務必透過 `AdminSeed:Email`/`AdminSeed:Password` 覆蓋）。
 
-## 部署
+## CI/CD
 
-採「本機 `dotnet publish` 產生自包含輸出、複製到伺服器」的方式（IIS + ASP.NET Core Module），不在伺服器上 clone 原始碼 build，避開跨 repo 相對路徑在伺服器上解析不到的問題。正式環境的連線字串、`AdminSeed`、`Resend`、`GoogleOAuth` 皆透過伺服器上的 `appsettings.Production.json` 設定，不進版本控制。`deploy-scripts/` 底下的 SQL script 是搭配這個流程、在本機產生後拿去正式資料庫執行用的。
+- **CI**（`.github/workflows/ci.yml`）：push / PR 到 `main` 時，在 GitHub-hosted runner 上 checkout（含 `MemberShipSys` submodule）+ `dotnet build`，純粹驗證能不能編譯過。
+- **CD**（`.github/workflows/cd.yml`）：CI 成功後自動觸發，在架在正式伺服器上的 **self-hosted runner** 執行「`dotnet publish`（self-contained, win-x64）→ 停站 → `robocopy` 換檔（排除 `appsettings.Production.json` 與 `Logs/`）→ 啟站」，也支援手動 `workflow_dispatch` 觸發。self-hosted runner 的設定步驟寫在 `deploy-scripts/setup-cd-runner.sh`（互動式腳本，需在伺服器上用 bash 執行）。
+- **刻意不自動化**：EF Core migration。CD 只負責換程式檔案，資料庫結構變更仍手動在伺服器上執行 `dotnet ef database update`，避免 migration 出錯時難以即時介入正式資料庫。
 
-IIS 部署需注意：要另外啟用 Windows 的 **WebSocket 通訊協定**功能（`Web Server (IIS)` → `Application Development` → `WebSocket Protocol`），否則 SignalR 還能靠降級傳輸方式運作，但原生 WebSocket 版會直接連不上。
+正式環境的連線字串、`AdminSeed`、`Resend`、`GoogleOAuth` 皆透過伺服器上的 `appsettings.Production.json` 設定，不進版本控制；`deploy-scripts/` 底下的 SQL script 則是搭配 migration 流程、在本機產生後拿去正式資料庫執行用的。
+
+IIS 部署需注意：要另外啟用 Windows 的 **WebSocket 通訊協定**功能（`Web Server (IIS)` → `Application Development` → `WebSocket Protocol`），否則 SignalR 還能靠降級傳輸方式運作，但原生 WebSocket 版會直接連不上（`setup-cd-runner.sh` 第一階段就是在確認這個）。
