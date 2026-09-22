@@ -1,6 +1,6 @@
 # ChatRoomSys
 
-一個 ASP.NET Core 練習作品集：**同一個聊天室功能，分別用原生 WebSocket 與 SignalR 各實作一次**，並直接沿用 `MemberShipSys.Core` 這個會員系統 library（獨立的 Razor Class Library，尚未公開），藉此對照「手刻底層連線管理」跟「框架高階封裝」的差異。
+一個 ASP.NET Core 練習作品集：**同一個聊天室功能，分別用原生 WebSocket 與 SignalR 各實作一次**，並直接沿用 `MemberShipSys.Core` 這個會員系統 library（獨立的 Razor Class Library，以 Git Submodule 引用，[repo](https://github.com/Alex20211129/MemberShipSys)），藉此對照「手刻底層連線管理」跟「框架高階封裝」的差異。
 
 🔗 線上展示：<https://chat.alexdemo1.com>
 （登入頁提供 5 組測試帳號可直接點選帶入，不需要自行註冊）
@@ -8,7 +8,7 @@
 ## 這個專案想展示什麼
 
 - **兩種即時通訊技術的實作對照**：`/Chat/WebSocket` 用 `System.Net.WebSockets` 手刻連線管理、廣播、在線名單、斷線重連；`/Chat/SignalR` 用 ASP.NET Core SignalR Hub，享有內建的自動重連、事件分派機制。兩者共用同一套畫面渲染邏輯，但連線層完全獨立，互不影響、也互不互通。
-- **跨專案重用會員系統**：透過 `ProjectReference` 直接引用 `MemberShipSys.Core`（一個獨立的 Identity 會員系統 Razor Class Library），不修改該 library 原始碼即可疊加聊天室功能（唯一例外是修正了該 library 一個資料 seed 順序的 bug，詳見 commit history）。
+- **跨專案重用會員系統**：以 Git Submodule 引入 `MemberShipSys.Core`（一個獨立的 Identity 會員系統 Razor Class Library），並透過 `ProjectReference` 直接引用其原始碼，不修改該 library 即可疊加聊天室功能（唯一例外是修正了該 library 一個資料 seed 順序的 bug，該修正已提交至 `MemberShipSys` repo）。
 - **訪客也能聊天**：不用登入就能用暱稱加入聊天室；登入會員則額外享有「載入最近 50 則歷史訊息」的權限。暱稱撞名時會自動加上後綴（撞到真實會員帳號名稱 → `_同名N`；撞到目前使用中的顯示名稱 → `_vN`）。
 
 ## 架構總覽
@@ -81,11 +81,11 @@ deploy-scripts/      EF Core migration SQL、測試帳號 seed script（部署�
 ## 本機開發
 
 1. 需要 .NET 10 SDK、SQL Server（LocalDB 即可）。
-2. 專案透過相對路徑 `ProjectReference` 引用 `..\..\MemberShipSys\MemberShipSys.Core`，須確保該 repo 存在於同一層目錄下的 `MemberShipSys` 資料夾。
+2. `MemberShipSys.Core` 是以 Git Submodule 引用（`MemberShipSys` 資料夾，指向獨立的 [MemberShipSys](https://github.com/Alex20211129/MemberShipSys) repo）。clone 時請用 `git clone --recurse-submodules`；若已經 clone 過，執行 `git submodule update --init` 補拉子模組。
 3. 設定 `appsettings.Development.json` 的 `ConnectionStrings:DefaultConnection`。
 4. 套用 migration：
    ```
-   dotnet ef database update --context ApplicationDbContext --project ..\..\MemberShipSys\MemberShipSys.Core\MemberShipSys.Core.csproj --startup-project .
+   dotnet ef database update --context ApplicationDbContext --project MemberShipSys\MemberShipSys.Core\MemberShipSys.Core.csproj --startup-project .
    dotnet ef database update --context ChatDbContext
    ```
 5. `dotnet run --launch-profile http`，首頁會自動 seed 管理員帳號（預設 `admin@example.com` / `Admin123!`，正式環境務必透過 `AdminSeed:Email`/`AdminSeed:Password` 覆蓋）。

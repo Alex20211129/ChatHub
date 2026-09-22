@@ -8,7 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MemberShipSys\MemberShipSys.Core\MemberShipSys.Core.csproj" />
+    <ProjectReference Include="MemberShipSys\MemberShipSys.Core\MemberShipSys.Core.csproj" />
+  </ItemGroup>
+
+  <!-- MemberShipSys is a nested submodule; exclude it from this project's implicit glob so its
+       files aren't compiled both directly here and via the ProjectReference above. -->
+  <ItemGroup>
+    <Compile Remove="MemberShipSys\**\*.cs" />
+    <Content Remove="MemberShipSys\**\*" />
+    <EmbeddedResource Remove="MemberShipSys\**\*" />
+    <None Remove="MemberShipSys\**\*" />
   </ItemGroup>
 
   <ItemGroup>
