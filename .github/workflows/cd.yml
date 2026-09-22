@@ -36,11 +36,19 @@ jobs:
             Stop-Website -Name "ChatRoomSys"
 
             robocopy publish_output "C:\inetpub\wwwroot\chatroomsys" /MIR /XF appsettings.Production.json /XD Logs
-            if ($LASTEXITCODE -ge 8) {
-              throw "robocopy failed with exit code $LASTEXITCODE"
+            $robocopyExitCode = $LASTEXITCODE
+            if ($robocopyExitCode -ge 8) {
+              throw "robocopy failed with exit code $robocopyExitCode"
             }
           }
           finally {
             Start-WebAppPool -Name "ChatRoomSysPool"
             Start-Website -Name "ChatRoomSys"
           }
+
+          # Robocopy's own exit code (0-7) reflects a successful copy, not a
+          # failure, but PowerShell steps in Actions fail on any non-zero
+          # $LASTEXITCODE left behind by the last external command. Only
+          # reached when the checks above didn't throw, so it's safe to
+          # normalize to 0 here.
+          exit 0
